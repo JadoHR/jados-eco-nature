@@ -1,0 +1,191 @@
+// JADOS ECO-NATURE INDUSTRIES — data model
+// Money is always stored as integer MINOR units (RWF has 0 decimals, so 1 unit = 1 franc).
+// Local development uses SQLite. For hosted production switch `provider` to "postgresql"
+// and point DATABASE_URL at a managed Postgres database (see README → Deployment).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime   @default(now())
+  lastLoginAt  DateTime?
+  auditLogs    AuditLog[]
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String    @default("")
+  sortOrder   Int       @default(0)
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+}
+
+model Product {
+  id               String         @id @default(cuid())
+  name             String
+  slug             String         @unique
+  sku              String         @unique
+  shortDescription String
+  description      String
+  categoryId       String
+  category         Category       @relation(fields: [categoryId], references: [id])
+  priceMinor       Int
+  currency         String         @default("RWF")
+  size             String         @default("")
+  ingredients      String         @default("")
+  directions       String         @default("")
+  warnings         String         @default("")
+  storage          String         @default("")
+  stockQuantity    Int            @default(0)
+  /// draft | published | archived
+  status           String         @default("draft")
+  /// Concept products are shown for interest only and can never be ordered.
+  isConcept        Boolean        @default(false)
+  /// Demo products carry placeholder data; they can only be ordered while STORE_MODE=demo.
+  isDemo           Boolean        @default(false)
+  featured         Boolean        @default(false)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  images           ProductImage[]
+  orderItems       OrderItem[]
+
+  @@index([categoryId])
+  @@index([status, featured])
+  @@index([createdAt])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String
+  sortOrder Int     @default(0)
+
+  @@index([productId])
+}
+
+model DeliveryZone {
+  id        String  @id @default(cuid())
+  name      String
+  feeMinor  Int
+  eta       String  @default("")
+  active    Boolean @default(true)
+  sortOrder Int     @default(0)
+}
+
+model Order {
+  id               String      @id @default(cuid())
+  reference        String      @unique
+  /// Random token required to view the confirmation page (prevents guessing other customers' orders).
+  accessToken      String
+  /// Client-generated key so double clicks / retries never create two orders.
+  idempotencyKey   String      @unique
+  /// pending_confirmation | confirmed | processing | ready_for_dispatch | dispatched | delivered | cancelled | refunded
+  status           String      @default("pending_confirmation")
+  /// unpaid | paid | refunded — only changed by an admin or a trusted payment provider.
+  paymentStatus    String      @default("unpaid")
+  paymentMethod    String
+  /// delivery | pickup
+  fulfilmentMethod String
+  deliveryZoneName String      @default("")
+  customerName     String
+  phone            String
+  email            String      @default("")
+  address          String      @default("")
+  city             String      @default("")
+  notes            String      @default("")
+  internalNotes    String      @default("")
+  subtotalMinor    Int
+  deliveryFeeMinor Int
+  totalMinor       Int
+  currency         String
+  isDemo           Boolean     @default(false)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  items            OrderItem[]
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id             String   @id @default(cuid())
+  orderId        String
+  order          Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId      String?
+  product        Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  /// Snapshots taken at order time
+  productName    String
+  sku            String
+  unitPriceMinor Int
+  quantity       Int
+  lineTotalMinor Int
+
+  @@index([orderId])
+}
+
+/// Singleton row (id = 1) holding all owner-configurable store settings.
+model StoreSettings {
+  id                  Int     @id @default(1)
+  storeName           String  @default("JADOS ECO-NATURE INDUSTRIES")
+  currency            String  @default("RWF")
+  contactPhone        String  @default("")
+  whatsappNumber      String  @default("")
+  contactEmail        String  @default("")
+  businessAddress     String  @default("")
+  operatingHours      String  @default("")
+  announcement        String  @default("")
+  pickupEnabled       Boolean @default(true)
+  pickupInstructions  String  @default("")
+  /// JSON array of { id, label, instructions, enabled }
+  paymentMethods      String  @default("[]")
+  lowStockThreshold   Int     @default(5)
+  instagramUrl        String  @default("")
+  facebookUrl         String  @default("")
+  linkedinUrl         String  @default("")
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  consentAt DateTime @default(now())
+  source    String   @default("homepage")
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  contact   String
+  topic     String   @default("general")
+  message   String
+  handled   Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id        String     @id @default(cuid())
+  adminId   String?
+  admin     AdminUser? @relation(fields: [adminId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String
+  entityId  String     @default("")
+  details   String     @default("")
+  createdAt DateTime   @default(now())
+
+  @@index([createdAt])
+}

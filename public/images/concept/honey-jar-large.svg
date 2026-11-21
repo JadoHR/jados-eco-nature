@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-label="Concept illustration: large honey jar with dipper">
+<defs>
+<pattern id="hc" width="56" height="97" patternUnits="userSpaceOnUse" patternTransform="scale(.6)">
+<path d="M28 0l28 16v32L28 64 0 48V16zM28 64l28 16v17M28 64L0 80v17" fill="none" stroke="#82936A" stroke-opacity=".18" stroke-width="2"/>
+</pattern>
+<radialGradient id="glow" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#fff" stop-opacity=".7"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="600" height="600" fill="#F1E7D2"/>
+<rect width="600" height="600" fill="url(#hc)"/>
+<circle cx="300" cy="280" r="230" fill="url(#glow)"/>
+<ellipse cx="300" cy="500" rx="170" ry="22" fill="#174D36" opacity=".12"/>
+<g transform="translate(110 470) rotate(-30)"><path d="M0 0C30-60 90-70 120-60 100-20 50 10 0 0z" fill="#82936A" opacity=".75"/><path d="M0 0C40-30 80-45 118-58" stroke="#174D36" stroke-width="3" fill="none" opacity=".6"/></g><g transform="translate(500 455) rotate(35)"><path d="M0 0C30-60 90-70 120-60 100-20 50 10 0 0z" fill="#82936A" opacity=".75"/><path d="M0 0C40-30 80-45 118-58" stroke="#174D36" stroke-width="3" fill="none" opacity=".6"/></g>
+
+<rect x="195" y="120" width="210" height="40" rx="8" fill="#174D36"/>
+<path d="M185 170h230q18 0 18 24v280q0 34-34 34H201q-34 0-34-34V194q0-24 18-24z" fill="#C9871A" stroke="#A86C10" stroke-width="4"/>
+<path d="M195 195h22v270h-22z" fill="#fff" opacity=".3"/>
+<rect x="205" y="290" width="190" height="74" rx="10" fill="#FFFCF6" stroke="#D5A82E" stroke-width="3"/>
+<text x="300" y="320" text-anchor="middle" font-family="Georgia, serif" font-size="20" font-weight="700" fill="#174D36" letter-spacing="3">JADOS</text>
+<text x="300" y="346" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#285B43" letter-spacing="1.5">PURE HONEY · 500</text>
+<g transform="translate(430 150) rotate(25)"><rect x="-6" y="0" width="12" height="190" rx="6" fill="#8B5E34"/><g fill="#A8743F"><ellipse cx="0" cy="200" rx="26" ry="7"/><ellipse cx="0" cy="216" rx="24" ry="7"/><ellipse cx="0" cy="232" rx="22" ry="7"/><ellipse cx="0" cy="248" rx="20" ry="7"/></g></g>
+</svg>

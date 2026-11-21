@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Brand tokens (light). Components use the Tailwind colours below, which read these variables,
+   so dark mode only has to redefine the variables. */
+:root {
+  --forest: #174d36;
+  --botanical: #285b43;
+  --sage: #82936a;
+  --gold: #d5a82e;
+  --paper: #f5f0e5;
+  --cream: #fffcf6;
+  --ink: #252b25;
+  --muted: #5b6658;
+  --line: #e2d9c6;
+  --on-forest: #fffcf6;
+  color-scheme: light;
+}
+
+.dark {
+  --forest: #a9d8b8;
+  --botanical: #7fb894;
+  --sage: #9db084;
+  --gold: #e2b84a;
+  --paper: #101612;
+  --cream: #18211b;
+  --ink: #ece6d6;
+  --muted: #b2b9a8;
+  --line: #2c3a30;
+  --on-forest: #0f1a13;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-forest: var(--forest);
+  --color-botanical: var(--botanical);
+  --color-sage: var(--sage);
+  --color-gold: var(--gold);
+  --color-paper: var(--paper);
+  --color-cream: var(--cream);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-on-forest: var(--on-forest);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply bg-forest text-on-forest hover:bg-botanical;
+  }
+  .btn-secondary {
+    @apply border border-forest text-forest hover:bg-forest/10;
+  }
+  .btn-gold {
+    @apply bg-gold text-[#1d2a20] hover:brightness-95;
+  }
+  .card {
+    @apply rounded-2xl border border-line bg-cream;
+  }
+  .input {
+    @apply w-full rounded-xl border border-line bg-cream px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/70 focus:border-forest focus:outline-none focus:ring-2 focus:ring-forest/20;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-ink;
+  }
+  .field-error {
+    @apply mt-1 text-sm text-red-700 dark:text-red-300;
+  }
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.2em] text-sage;
+  }
+  .heading-display {
+    @apply font-display text-forest;
+  }
+  .prose-jados p {
+    @apply mb-4 leading-relaxed text-ink/90;
+  }
+  .prose-jados h2 {
+    @apply mb-3 mt-10 font-display text-2xl text-forest;
+  }
+  .prose-jados h3 {
+    @apply mb-2 mt-6 text-lg font-semibold text-forest;
+  }
+  .prose-jados ul {
+    @apply mb-4 list-disc space-y-1.5 pl-6 text-ink/90;
+  }
+}

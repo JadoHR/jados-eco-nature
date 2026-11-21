@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="JADOS bee, flower and leaf mark">
+<circle cx="60" cy="60" r="58" fill="#FFFCF6" stroke="#174D36" stroke-width="4"/>
+<g transform="translate(60 74)">
+<ellipse rx="9" ry="17" cy="-16" fill="#D5A82E" transform="rotate(0)"/><ellipse rx="9" ry="17" cy="-16" fill="#D5A82E" transform="rotate(60)"/><ellipse rx="9" ry="17" cy="-16" fill="#D5A82E" transform="rotate(120)"/><ellipse rx="9" ry="17" cy="-16" fill="#D5A82E" transform="rotate(180)"/><ellipse rx="9" ry="17" cy="-16" fill="#D5A82E" transform="rotate(240)"/><ellipse rx="9" ry="17" cy="-16" fill="#D5A82E" transform="rotate(300)"/>
+<circle r="9" fill="#C9871A"/>
+</g>
+<path d="M22 96C30 70 50 64 62 70 54 86 40 98 22 96z" fill="#82936A"/>
+<path d="M98 96C90 70 70 64 58 70 66 86 80 98 98 96z" fill="#285B43"/>
+<g transform="translate(60 34)">
+<ellipse cx="-11" cy="-7" rx="10" ry="6" fill="#fff" stroke="#174D36" stroke-width="2" transform="rotate(-25 -11 -7)"/>
+<ellipse cx="11" cy="-7" rx="10" ry="6" fill="#fff" stroke="#174D36" stroke-width="2" transform="rotate(25 11 -7)"/>
+<ellipse rx="9" ry="13" fill="#D5A82E" stroke="#174D36" stroke-width="2.5"/>
+<path d="M-8.5-3h17M-8 4h16" stroke="#174D36" stroke-width="3"/>
+<circle cy="-13" r="5" fill="#174D36"/>
+</g>
+</svg>
