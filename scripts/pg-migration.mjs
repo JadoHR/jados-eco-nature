@@ -27,12 +27,15 @@ writeFileSync(schemaPath, pgSchema);
 const from = prev ? ["--from-schema-datamodel", prevTmp] : ["--from-empty"];
 const npx = process.platform === "win32" ? "npx.cmd" : "npx";
 // Relative path: the project folder may contain spaces, which break the Windows shell call.
-const sql = execFileSync(npx, ["prisma", "migrate", "diff", ...from, "--to-schema-datamodel", "prisma/postgres/schema.prisma", "--script"], {
+let sql = execFileSync(npx, ["prisma", "migrate", "diff", ...from, "--to-schema-datamodel", "prisma/postgres/schema.prisma", "--script"], {
   cwd: root,
   encoding: "utf8",
   shell: process.platform === "win32",
 });
 if (prev) rmSync(prevTmp, { force: true });
+// Keep migrations schema-agnostic: the store lives in its own Postgres schema ("jados", set via the
+// connection URL) so it can share a database with other apps without touching their tables.
+sql = sql.replace(/^CREATE SCHEMA IF NOT EXISTS "public";\s*$/m, "").replace(/"public"\./g, "");
 
 if (!sql.trim() || /^-- This is an empty migration/m.test(sql)) {
   console.log("No schema changes — no migration created.");

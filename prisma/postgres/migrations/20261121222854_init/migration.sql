@@ -1,8 +1,5 @@
--- CreateSchema
-CREATE SCHEMA IF NOT EXISTS "public";
-
 -- CreateTable
-CREATE TABLE "public"."AdminUser" (
+CREATE TABLE "AdminUser" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -14,7 +11,7 @@ CREATE TABLE "public"."AdminUser" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."Category" (
+CREATE TABLE "Category" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
@@ -28,7 +25,7 @@ CREATE TABLE "public"."Category" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."Product" (
+CREATE TABLE "Product" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
@@ -55,7 +52,7 @@ CREATE TABLE "public"."Product" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."ProductImage" (
+CREATE TABLE "ProductImage" (
     "id" TEXT NOT NULL,
     "productId" TEXT NOT NULL,
     "url" TEXT NOT NULL,
@@ -66,7 +63,7 @@ CREATE TABLE "public"."ProductImage" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."DeliveryZone" (
+CREATE TABLE "DeliveryZone" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "feeMinor" INTEGER NOT NULL,
@@ -78,7 +75,7 @@ CREATE TABLE "public"."DeliveryZone" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."Order" (
+CREATE TABLE "Order" (
     "id" TEXT NOT NULL,
     "reference" TEXT NOT NULL,
     "accessToken" TEXT NOT NULL,
@@ -107,7 +104,7 @@ CREATE TABLE "public"."Order" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."OrderItem" (
+CREATE TABLE "OrderItem" (
     "id" TEXT NOT NULL,
     "orderId" TEXT NOT NULL,
     "productId" TEXT,
@@ -121,7 +118,7 @@ CREATE TABLE "public"."OrderItem" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."StoreSettings" (
+CREATE TABLE "StoreSettings" (
     "id" INTEGER NOT NULL DEFAULT 1,
     "storeName" TEXT NOT NULL DEFAULT 'JADOS ECO-NATURE INDUSTRIES',
     "currency" TEXT NOT NULL DEFAULT 'RWF',
@@ -143,7 +140,7 @@ CREATE TABLE "public"."StoreSettings" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."NewsletterSubscriber" (
+CREATE TABLE "NewsletterSubscriber" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "consentAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -153,7 +150,7 @@ CREATE TABLE "public"."NewsletterSubscriber" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."ContactMessage" (
+CREATE TABLE "ContactMessage" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "contact" TEXT NOT NULL,
@@ -166,7 +163,7 @@ CREATE TABLE "public"."ContactMessage" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."AuditLog" (
+CREATE TABLE "AuditLog" (
     "id" TEXT NOT NULL,
     "adminId" TEXT,
     "action" TEXT NOT NULL,
@@ -179,62 +176,62 @@ CREATE TABLE "public"."AuditLog" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "AdminUser_email_key" ON "public"."AdminUser"("email");
+CREATE UNIQUE INDEX "AdminUser_email_key" ON "AdminUser"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Category_slug_key" ON "public"."Category"("slug");
+CREATE UNIQUE INDEX "Category_slug_key" ON "Category"("slug");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Product_slug_key" ON "public"."Product"("slug");
+CREATE UNIQUE INDEX "Product_slug_key" ON "Product"("slug");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Product_sku_key" ON "public"."Product"("sku");
+CREATE UNIQUE INDEX "Product_sku_key" ON "Product"("sku");
 
 -- CreateIndex
-CREATE INDEX "Product_categoryId_idx" ON "public"."Product"("categoryId");
+CREATE INDEX "Product_categoryId_idx" ON "Product"("categoryId");
 
 -- CreateIndex
-CREATE INDEX "Product_status_featured_idx" ON "public"."Product"("status", "featured");
+CREATE INDEX "Product_status_featured_idx" ON "Product"("status", "featured");
 
 -- CreateIndex
-CREATE INDEX "Product_createdAt_idx" ON "public"."Product"("createdAt");
+CREATE INDEX "Product_createdAt_idx" ON "Product"("createdAt");
 
 -- CreateIndex
-CREATE INDEX "ProductImage_productId_idx" ON "public"."ProductImage"("productId");
+CREATE INDEX "ProductImage_productId_idx" ON "ProductImage"("productId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Order_reference_key" ON "public"."Order"("reference");
+CREATE UNIQUE INDEX "Order_reference_key" ON "Order"("reference");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Order_idempotencyKey_key" ON "public"."Order"("idempotencyKey");
+CREATE UNIQUE INDEX "Order_idempotencyKey_key" ON "Order"("idempotencyKey");
 
 -- CreateIndex
-CREATE INDEX "Order_status_idx" ON "public"."Order"("status");
+CREATE INDEX "Order_status_idx" ON "Order"("status");
 
 -- CreateIndex
-CREATE INDEX "Order_createdAt_idx" ON "public"."Order"("createdAt");
+CREATE INDEX "Order_createdAt_idx" ON "Order"("createdAt");
 
 -- CreateIndex
-CREATE INDEX "OrderItem_orderId_idx" ON "public"."OrderItem"("orderId");
+CREATE INDEX "OrderItem_orderId_idx" ON "OrderItem"("orderId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "NewsletterSubscriber_email_key" ON "public"."NewsletterSubscriber"("email");
+CREATE UNIQUE INDEX "NewsletterSubscriber_email_key" ON "NewsletterSubscriber"("email");
 
 -- CreateIndex
-CREATE INDEX "AuditLog_createdAt_idx" ON "public"."AuditLog"("createdAt");
+CREATE INDEX "AuditLog_createdAt_idx" ON "AuditLog"("createdAt");
 
 -- AddForeignKey
-ALTER TABLE "public"."Product" ADD CONSTRAINT "Product_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "public"."Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Product" ADD CONSTRAINT "Product_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."ProductImage" ADD CONSTRAINT "ProductImage_productId_fkey" FOREIGN KEY ("productId") REFERENCES "public"."Product"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "ProductImage" ADD CONSTRAINT "ProductImage_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."OrderItem" ADD CONSTRAINT "OrderItem_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "public"."Order"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."OrderItem" ADD CONSTRAINT "OrderItem_productId_fkey" FOREIGN KEY ("productId") REFERENCES "public"."Product"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."AuditLog" ADD CONSTRAINT "AuditLog_adminId_fkey" FOREIGN KEY ("adminId") REFERENCES "public"."AdminUser"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "AuditLog" ADD CONSTRAINT "AuditLog_adminId_fkey" FOREIGN KEY ("adminId") REFERENCES "AdminUser"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 

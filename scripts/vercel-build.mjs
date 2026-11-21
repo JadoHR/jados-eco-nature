@@ -1,23 +1,32 @@
 // Production build used by Vercel (see vercel.json). Requires a Postgres DATABASE_URL.
-//  1. generate the Postgres Prisma schema + client
-//  2. apply pending migrations (prisma/postgres/migrations)
-//  3. seed demo data ONLY if the database is empty (never overwrites the owner's edits)
+//  1. swap in the Postgres Prisma schema + migrations (the build machine is throwaway, so this is safe)
+//  2. apply pending migrations
+//  3. seed demo data ONLY if the store's tables are empty (never overwrites the owner's edits)
 //  4. create the first admin if ADMIN_EMAIL + ADMIN_PASSWORD are set and that admin doesn't exist yet
 //  5. next build
+//
+// The store keeps its tables in its own Postgres schema ("jados", see src/lib/db-url.mjs), so it can
+// share a database with other apps without reading or changing their tables.
 import { execSync } from "node:child_process";
+import { cpSync, rmSync, writeFileSync } from "node:fs";
+import { pgSchema } from "./pg-schema.mjs";
+import { withStoreSchema } from "../src/lib/db-url.mjs";
 
 if (!/^postgres(ql)?:\/\//.test(process.env.DATABASE_URL ?? "")) {
   console.error("DATABASE_URL must be a Postgres connection string for production builds (connect a Neon database in Vercel → Storage).");
   process.exit(1);
 }
-if (!process.env.DATABASE_URL_UNPOOLED) process.env.DATABASE_URL_UNPOOLED = process.env.DATABASE_URL;
+process.env.DATABASE_URL = withStoreSchema(process.env.DATABASE_URL);
+process.env.DATABASE_URL_UNPOOLED = withStoreSchema(process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL);
 
 const run = (cmd, env = {}) => execSync(cmd, { stdio: "inherit", env: { ...process.env, ...env } });
-const schema = "--schema prisma/postgres/schema.prisma";
 
-run("node scripts/pg-schema.mjs");
-run(`npx prisma generate ${schema}`);
-run(`npx prisma migrate deploy ${schema}`);
+writeFileSync("prisma/schema.prisma", pgSchema);
+rmSync("prisma/migrations", { recursive: true, force: true });
+cpSync("prisma/postgres/migrations", "prisma/migrations", { recursive: true });
+
+run("npx prisma generate");
+run("npx prisma migrate deploy");
 run("npx tsx prisma/seed.ts", { SEED_IF_EMPTY: "1" });
 if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
   run("npx tsx scripts/create-admin.ts", { ADMIN_CREATE_ONLY: "1" });
