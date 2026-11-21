@@ -181,14 +181,31 @@ Results at hand-over: **typecheck ✓, lint ✓, 31/31 tests ✓, production bui
 
 The app needs a Node.js host and a database. Recommended: **Vercel** (hosting) + **Neon**, **Supabase** or **Vercel Postgres** (database). SQLite is only for local development because serverless hosts don't keep files.
 
-1. **Switch to Postgres**: in `prisma/schema.prisma` change `provider = "sqlite"` to `provider = "postgresql"`. Delete `prisma/migrations/` and run `npx prisma migrate dev --name init` against a Postgres `DATABASE_URL` to create Postgres migrations, then commit them.
-   *Optional:* for case-insensitive search on Postgres, add `mode: "insensitive"` to the `contains` filters in `src/lib/catalog.ts` and the admin order search.
-2. **Push the code to GitHub** (see below).
-3. **Create the Vercel project** from the GitHub repo and set the environment variables: `DATABASE_URL`, `AUTH_SECRET`, `NEXT_PUBLIC_SITE_URL`, `STORE_MODE`.
-4. **Build command**: `prisma migrate deploy && npm run build` (or run `npm run db:deploy` once from your machine against the production database).
-5. Run `npm run db:seed` against production **only if** you want the demo data there, then replace it with real products.
-6. Create the production admin with `npm run admin:create` (with `DATABASE_URL` pointing to production).
-7. Set `STORE_MODE=live` and point your domain at Vercel.
+**How the two databases fit together**
+
+- `prisma/schema.prisma` (SQLite) is the single source of truth for the data model, used locally and by the tests.
+- `prisma/postgres/` holds the generated Postgres copy plus its migrations, used in production. Don't edit it by hand.
+- After changing the model, run `npm run db:migrate -- --name <change>` (local SQLite) **and** `npm run db:pg:migration -- <change>` (production Postgres), then commit both. A test fails if you forget the second one.
+
+**Vercel setup (already wired up in `vercel.json`)**
+
+1. Import the GitHub repo in Vercel (framework: Next.js).
+2. **Storage → Create Database → Neon (Postgres)** and connect it to the project. This sets `DATABASE_URL` and `DATABASE_URL_UNPOOLED`.
+3. Set these environment variables:
+   - `AUTH_SECRET`: a long random string.
+   - `NEXT_PUBLIC_SITE_URL`: your live URL, for example `https://jados-eco-nature.vercel.app`.
+   - `STORE_MODE`: `demo` until you launch.
+   - `ADMIN_EMAIL` and `ADMIN_PASSWORD`: 12+ characters. Only used to create the first admin; remove them after the first deploy.
+4. Deploy. `scripts/vercel-build.mjs` runs on every build:
+   1. applies Postgres migrations;
+   2. seeds demo data **only into an empty database**;
+   3. creates the first admin if it doesn't exist yet (it never resets an existing password);
+   4. builds the site.
+5. Every `git push` to `main` redeploys automatically.
+6. At launch:
+   1. replace the demo products with real ones;
+   2. set `STORE_MODE=live`;
+   3. optionally add your own domain in Vercel → Domains.
 
 ### Pushing to GitHub
 
@@ -196,7 +213,7 @@ The app needs a Node.js host and a database. Recommended: **Vercel** (hosting) +
 git init
 git add .
 git commit -m "JADOS ECO-NATURE store — first release"
-gh repo create jados-eco-nature --private --source . --push
+gh repo create jados-eco-nature --public --source . --push
 ```
 
 `.gitignore` already excludes `.env`, `*.db` and `node_modules`. Check `git status` before the first commit.

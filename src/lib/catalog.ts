@@ -1,6 +1,6 @@
 import { cache } from "react";
 import type { Prisma } from "@prisma/client";
-import { prisma } from "./db";
+import { containsText, prisma } from "./db";
 
 export type SortKey = "featured" | "newest" | "price_asc" | "price_desc";
 
@@ -21,10 +21,10 @@ export async function getProducts(opts: { q?: string; category?: string; sort?: 
   const q = opts.q?.trim().slice(0, 80);
   if (q) {
     where.OR = [
-      { name: { contains: q } },
-      { shortDescription: { contains: q } },
-      { description: { contains: q } },
-      { category: { name: { contains: q } } },
+      { name: containsText(q) },
+      { shortDescription: containsText(q) },
+      { description: containsText(q) },
+      { category: { name: containsText(q) } },
     ];
   }
   const orderBy: Prisma.ProductOrderByWithRelationInput[] =

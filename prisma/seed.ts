@@ -203,6 +203,12 @@ const products: SeedProduct[] = [
 ];
 
 async function main() {
+  // Production builds set SEED_IF_EMPTY=1 so demo data is only added to a brand-new database.
+  if (process.env.SEED_IF_EMPTY === "1" && (await prisma.category.count()) > 0) {
+    console.log("Database already has data — skipping seed.");
+    return;
+  }
+
   await prisma.storeSettings.upsert({
     where: { id: 1 },
     update: {},

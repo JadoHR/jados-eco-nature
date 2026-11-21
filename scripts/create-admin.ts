@@ -25,6 +25,12 @@ async function main() {
     throw new Error("Set ADMIN_PASSWORD to at least 12 characters (a passphrase is best).");
   }
 
+  // Vercel builds set ADMIN_CREATE_ONLY=1: create the first admin once, never reset an existing password.
+  if (process.env.ADMIN_CREATE_ONLY === "1" && (await prisma.adminUser.findUnique({ where: { email } }))) {
+    console.log(`Admin ${email} already exists — leaving it unchanged.`);
+    return;
+  }
+
   const passwordHash = await bcrypt.hash(password, 12);
   const admin = await prisma.adminUser.upsert({
     where: { email },

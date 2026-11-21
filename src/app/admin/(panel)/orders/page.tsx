@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { prisma } from "@/lib/db";
+import { containsText, prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { formatMoney } from "@/lib/money";
 import { ORDER_STATUSES, orderStatusLabel } from "@/lib/config";
@@ -18,7 +18,7 @@ export default async function OrdersPage({ searchParams }: Props) {
   const orders = await prisma.order.findMany({
     where: {
       ...(validStatus ? { status: validStatus } : {}),
-      ...(term ? { OR: [{ reference: { contains: term } }, { customerName: { contains: term } }, { phone: { contains: term } }] } : {}),
+      ...(term ? { OR: [{ reference: containsText(term) }, { customerName: containsText(term) }, { phone: { contains: term } }] } : {}),
     },
     orderBy: { createdAt: "desc" },
     take: 200,
