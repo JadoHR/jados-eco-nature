@@ -200,7 +200,7 @@ The app needs a Node.js host and a database. Recommended: **Vercel** (hosting) +
 1. Import the GitHub repo in Vercel (framework: Next.js).
 2. **Storage → Create Database → Neon (Postgres)** and connect it to the project. This sets `DATABASE_URL` and `DATABASE_URL_UNPOOLED`.
 3. Set these environment variables:
-   - `AUTH_SECRET`: a long random string.
+   - `AUTH_SECRET`: a long random string. Recommended but optional on Postgres: if it's missing, a key is derived from the private database URL.
    - `NEXT_PUBLIC_SITE_URL`: your live URL, for example `https://jados-eco-nature.vercel.app`.
    - `STORE_MODE`: `demo` until you launch.
    - `ADMIN_EMAIL` and `ADMIN_PASSWORD`: 12+ characters. Only used to create the first admin; remove them after the first deploy.
