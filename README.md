@@ -187,6 +187,12 @@ The app needs a Node.js host and a database. Recommended: **Vercel** (hosting) +
 - `prisma/postgres/` holds the generated Postgres copy plus its migrations, used in production. Don't edit it by hand.
 - After changing the model, run `npm run db:migrate -- --name <change>` (local SQLite) **and** `npm run db:pg:migration -- <change>` (production Postgres), then commit both. A test fails if you forget the second one.
 
+**Forgot the admin password?**
+
+1. In Vercel, set `ADMIN_EMAIL`, a new `ADMIN_PASSWORD` (12+ characters) and `ADMIN_RESET_PASSWORD=1`.
+2. Redeploy, then sign in with the new password.
+3. Delete `ADMIN_PASSWORD` and `ADMIN_RESET_PASSWORD` from Vercel again.
+
 **Postgres schema `jados`:** on Postgres the store keeps all its tables in its own schema named `jados`, set in `src/lib/db-url.mjs`. That means it can share a Neon database with other apps without reading or changing their tables. The live site currently uses the existing Neon database `neon-cyan-window`.
 
 **Vercel setup (already wired up in `vercel.json`)**

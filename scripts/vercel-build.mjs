@@ -29,6 +29,9 @@ run("npx prisma generate");
 run("npx prisma migrate deploy");
 run("npx tsx prisma/seed.ts", { SEED_IF_EMPTY: "1" });
 if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
-  run("npx tsx scripts/create-admin.ts", { ADMIN_CREATE_ONLY: "1" });
+  // Normally create-only. Set ADMIN_RESET_PASSWORD=1 for one deploy to reset a forgotten password,
+  // then remove ADMIN_PASSWORD and ADMIN_RESET_PASSWORD from Vercel again.
+  const reset = process.env.ADMIN_RESET_PASSWORD === "1";
+  run("npx tsx scripts/create-admin.ts", { ADMIN_CREATE_ONLY: reset ? "0" : "1" });
 }
 run("npx next build");
